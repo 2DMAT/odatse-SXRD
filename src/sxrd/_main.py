@@ -20,7 +20,7 @@ import py2dmat
 import py2dmat.mpi
 import py2dmat.util.toml
 
-from sxrd import Solver
+from odatse.extra.sxrd import Solver
 
 def main():
     import argparse
