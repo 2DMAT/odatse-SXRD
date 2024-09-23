@@ -2,7 +2,7 @@
 
 set -e
 
-#CMD=py2dmat-sxrd
+#CMD=odatse-SXRD
 CMD="python3 ../../src/main.py"
 
 sh prepare.sh
@@ -23,7 +23,7 @@ else
   false
 fi
 
-result=output/SimplexData.txt
+result=output/0/SimplexData.txt
 reference=ref_SimplexData.txt
 
 echo diff $result $reference

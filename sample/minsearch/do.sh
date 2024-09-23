@@ -2,7 +2,7 @@
 
 sh prepare.sh
 
-time py2dmat-sxrd input.toml
+time odatse-SXRD input.toml
 
 echo diff output/res.txt ref_res.txt
 res=0
