@@ -1,6 +1,6 @@
 #!/bin/sh
 
-#CMD=py2dmat-sxrd
+#CMD=odatse-SXRD
 CMD="python3 ../../src/main.py"
 
 sh prepare.sh
