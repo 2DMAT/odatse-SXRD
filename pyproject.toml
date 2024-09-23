@@ -1,15 +1,15 @@
 [tool.poetry]
-name = "py2dmat-sxrd"
+name = "odatse-SXRD"
 version = "1.0-dev"
-description = "SXRD solver module for Py2DMAT: data-analysis software of quantum beam diffraction experiments for 2D material structure"
+description = "SXRD solver module for ODAT-SE: data-analysis software of quantum beam diffraction experiments for 2D material structure"
 authors = ["2DMAT developers <2dmat-dev@issp.u-tokyo.ac.jp>"]
 license = "GPL-3.0-or-later"
 
 readme = "README.md"
-repository = "https://github.com/issp-center-dev/py2dmat-sxrd"
+repository = "https://github.com/2DMAT/odatse-SXRD"
 
 packages = [
-  { include = "sxrd", from = "src" }
+  { include = "sxrd", from = "src", to = "odatse/extra" }
   ]
 
 [tool.poetry.dependencies]
@@ -29,7 +29,7 @@ py2dmat = "^2"
 #pynvim = "^0.4.3"
 
 [tool.poetry.scripts]
-py2dmat-sxrd = "sxrd._main:main"
+odatse-SXRD = "odatse.extra.sxrd._main:main"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
