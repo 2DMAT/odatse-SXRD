@@ -1,7 +1,7 @@
 Input and output
 ================================
 
-``2DMAT-SXRD`` module is a ``Solver`` for 2DMAT that uses ``sxrdcalc`` to calculate the Rocking curve by giving atomic positions :math:`x` , atomic occupancies, and Debye-Waller factor, and returnes the deviation :math:`f(x)`  from the experimental Rocking curve.
+``odatse-SXRD`` module is a ``Solver`` for ODAT-SE that uses ``sxrdcalc`` to calculate the Rocking curve by giving atomic positions :math:`x` , atomic occupancies, and Debye-Waller factor, and returnes the deviation :math:`f(x)`  from the experimental Rocking curve.
 
 In this section, the input parameters, the input data, and the output data are explained.
 The input parameters are taken from the ``solver`` entry of the ``Info`` class.
@@ -223,7 +223,7 @@ Output files
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In ``sxrd``, the output files are stored in the folder with the rank number.
-Here is a description of the files that are output by ``py2dmat``.
+Here is a description of the files that are output by ``odatse-SXRD``.
 
 ``stdout``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

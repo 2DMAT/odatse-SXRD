@@ -14,7 +14,7 @@ The specific calculation procedure is as follows.
 
 3. Run the main program
 
-   Run the calculation using ``py2dmat-sxrd`` to estimate the atomic coordinates.
+   Run the calculation using ``odatse-SXRD`` to estimate the atomic coordinates.
 
 In the main program, the Nelder-Mead method implemented in `scipy.optimize.fmin <https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.fmin.html>`_ is applied to find the parameter that minimizes the deviation (R-value) between the intensity obtained using the solver (in this case ``sxrdcalc``) and the intensity listed in the reference file (``sic111-r3xr3_f.dat``).
 
@@ -164,7 +164,7 @@ Run the main program. The computation time will take only a few seconds on a nor
 
 .. code-block::
 
-   $ py2dmat-sxrd input.toml | tee log.txt
+   $ odatse-SXRD input.toml | tee log.txt
 
 Then, the standard output will look as follows.
 
@@ -208,7 +208,7 @@ Here is what it does, without further explanation.
 
   ./bulk.exe
 
-  time py2dmat-sxrd input.toml | tee log.txt
+  time odatse-SXRD input.toml | tee log.txt
 
   echo diff output/res.txt ref.txt
   res=0

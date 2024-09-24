@@ -14,7 +14,7 @@ Nelder-Mead法による最適化
 
 3. メインプログラムの実行
 
-   ``py2dmat-sxrd`` を用いて計算を実行し原子座標を推定する。
+   ``odatse-SXRD`` を用いて計算を実行し原子座標を推定する。
 
 メインプログラムでは、Nelder-Mead法 (`scipy.optimize.minimize <https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html>`_ を使用)を用いて、ソルバー(今回は ``sxrdcalc`` )を用いて得られた強度と、参照ファイル(``sic111-r3xr3_f.dat``)に記載された強度のずれ(R値)を最小化するパラメータを探索します。
 
@@ -159,7 +159,7 @@ Nelder-Mead法による最適化
 
 .. code-block::
 
-    $ py2dmat-sxrd input.toml | tee log.txt
+    $ odatse-SXRD input.toml | tee log.txt
 
 実行すると、以下の様な出力がされます。
 
@@ -201,7 +201,7 @@ Nelder-Mead法による最適化
 
   ./bulk.exe
 
-  time py2dmat-sxrd input.toml | tee log.txt
+  time odatse-SXRD input.toml | tee log.txt
 
   echo diff output/res.txt ref.txt
   res=0

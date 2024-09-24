@@ -1,7 +1,7 @@
 ユーザープログラムによる解析
 ================================
 
-ここでは、2DMAT-SXRD モジュールを用いたユーザープログラムを作成し、解析を行う方法を説明します。逆問題解析アルゴリズムには例としてNelder-Mead法を用います。
+ここでは、odatse-SXRD モジュールを用いたユーザープログラムを作成し、解析を行う方法を説明します。逆問題解析アルゴリズムには例としてNelder-Mead法を用います。
 
 サンプルファイルの場所
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -34,7 +34,7 @@
 プログラムの説明  
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-``simple.py`` は 2DMAT-SXRD モジュールを用いて解析を行うシンプルなプログラムです。
+``simple.py`` は odatse-SXRD モジュールを用いて解析を行うシンプルなプログラムです。
 プログラム全体を以下に示します。
 
 .. code-block:: python
@@ -43,11 +43,11 @@
 
    import py2dmat
    import py2dmat.algorithm.min_search
-   import sxrd
+   from odatse.extra.sxrd import Solver
 
    info = py2dmat.Info.from_file("input.toml")
 
-   solver = sxrd.Solver(info)
+   solver = Solver(info)
    runner = py2dmat.Runner(solver, info)
    alg = py2dmat.algorithm.min_search.Algorithm(info, runner)
    alg.main()
@@ -59,7 +59,7 @@
 
 - 今回利用する逆問題解析アルゴリズム ``py2dmat.algorithm.min_search``
 
-- 順問題ソルバーモジュール ``sxrd``
+- 順問題ソルバーモジュール ``odatse.extra.sxrd``
 
 次に、解析で利用するクラスのインスタンスを作成します。
 
@@ -67,9 +67,9 @@
 
   パラメータを格納するクラスです。 ``from_file`` クラスメソッドに TOML ファイルのパスを渡して作成することができます。
 
-- ``sxrd.Solver`` クラス
+- ``odatse.extra.sxrd.Solver`` クラス
 
-  2DMAT-SXRD モジュールの順問題ソルバーです。Info クラスのインスタンスを渡して作成します。
+  odatse-SXRD モジュールの順問題ソルバーです。Info クラスのインスタンスを渡して作成します。
 
 - ``py2dmat.Runner`` クラス
 
