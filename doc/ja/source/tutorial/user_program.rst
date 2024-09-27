@@ -1,7 +1,7 @@
 ユーザープログラムによる解析
 ================================
 
-ここでは、2DMAT-SXRD モジュールを用いたユーザープログラムを作成し、解析を行う方法を説明します。逆問題解析アルゴリズムには例としてNelder-Mead法を用います。
+ここでは、odatse-SXRD モジュールを用いたユーザープログラムを作成し、解析を行う方法を説明します。逆問題解析アルゴリズムには例としてNelder-Mead法を用います。
 
 サンプルファイルの場所
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -34,48 +34,48 @@
 プログラムの説明  
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-``simple.py`` は 2DMAT-SXRD モジュールを用いて解析を行うシンプルなプログラムです。
+``simple.py`` は odatse-SXRD モジュールを用いて解析を行うシンプルなプログラムです。
 プログラム全体を以下に示します。
 
 .. code-block:: python
 
    import numpy as np
 
-   import py2dmat
-   import py2dmat.algorithm.min_search
-   import sxrd
+   import odatse
+   import odatse.algorithm.min_search
+   from odatse.extra.SXRD import Solver
 
-   info = py2dmat.Info.from_file("input.toml")
+   info = odatse.Info.from_file("input.toml")
 
-   solver = sxrd.Solver(info)
-   runner = py2dmat.Runner(solver, info)
-   alg = py2dmat.algorithm.min_search.Algorithm(info, runner)
+   solver = Solver(info)
+   runner = odatse.Runner(solver, info)
+   alg = odatse.algorithm.min_search.Algorithm(info, runner)
    alg.main()
 
    
 プログラムではまず、必要なモジュールを import します。
 
-- 2DMAT のメインモジュール ``py2dmat``
+- ODAT-SE のメインモジュール ``odatse``
 
-- 今回利用する逆問題解析アルゴリズム ``py2dmat.algorithm.min_search``
+- 今回利用する逆問題解析アルゴリズム ``odatse.algorithm.min_search``
 
-- 順問題ソルバーモジュール ``sxrd``
+- 順問題ソルバーモジュール ``odatse.extra.SXRD``
 
 次に、解析で利用するクラスのインスタンスを作成します。
 
-- ``py2dmat.Info`` クラス
+- ``odatse.Info`` クラス
 
   パラメータを格納するクラスです。 ``from_file`` クラスメソッドに TOML ファイルのパスを渡して作成することができます。
 
-- ``sxrd.Solver`` クラス
+- ``odatse.extra.SXRD.Solver`` クラス
 
-  2DMAT-SXRD モジュールの順問題ソルバーです。Info クラスのインスタンスを渡して作成します。
+  odatse-SXRD モジュールの順問題ソルバーです。Info クラスのインスタンスを渡して作成します。
 
-- ``py2dmat.Runner`` クラス
+- ``odatse.Runner`` クラス
 
   順問題ソルバーと逆問題解析アルゴリズムを繋ぐクラスです。Solver クラスのインスタンスおよび Info クラスのパラメータを渡して作成します。
 
-- ``py2dmat.algorithm.min_search.Algorithm`` クラス
+- ``odatse.algorithm.min_search.Algorithm`` クラス
 
   逆問題解析アルゴリズムのクラスです。ここでは Nelder-Mead 法による最適化アルゴリズムのクラスモジュール ``min_search`` を利用します。Runnder のインスタンスを渡して作成します。
 
@@ -88,9 +88,9 @@ Solver, Runner, Algorithm の順にインスタンスを作成した後、Algori
 
     import numpy as np
     
-    import py2dmat
-    import py2dmat.algorithm.min_search
-    import sxrd
+    import odatse
+    import odatse.algorithm.min_search
+    from odatse.extra.SXRD import Solver
     
     param = {
         "base": {
@@ -155,17 +155,17 @@ Solver, Runner, Algorithm の順にインスタンスを作成した後、Algori
         },
     }
     
-    info = py2dmat.Info(param)
+    info = odatse.Info(param)
     
-    solver = sxrd.Solver(info)
-    runner = py2dmat.Runner(solver, info)
-    alg = py2dmat.algorithm.min_search.Algorithm(info, runner)
+    solver = Solver(info)
+    runner = odatse.Runner(solver, info)
+    alg = odatse.algorithm.min_search.Algorithm(info, runner)
     alg.main()
 
 dict 形式のパラメータを渡して Info クラスのインスタンスを作成します。
 同様に、パラメータをプログラム内で生成して渡すこともできます。
 
-入力ファイルの説明  
+入力ファイルの説明
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 メインプログラム用の入力ファイル ``input.toml`` は前述のNelder-Mead法による最適化で用いたのと同じファイルを利用できます。

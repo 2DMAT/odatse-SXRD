@@ -1,7 +1,7 @@
 Analyses by user programs
 ================================================================
 
-In this tutorial, we will write a user program using 2DMAT-SXRD module and perform analyese. As an example, we adopt Nelder-Mead method for the inverse problem algorithm.
+In this tutorial, we will write a user program using odatse-SXRD module and perform analyese. As an example, we adopt Nelder-Mead method for the inverse problem algorithm.
 
 
 Location of the sample files
@@ -36,48 +36,48 @@ The following sections describe these files and then show the actual calculation
 Description of main program
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-``simple.py`` is a simple program for the analyses using 2DMAT-SXRD module.
+``simple.py`` is a simple program for the analyses using odatse-SXRD module.
 The entire source file is shown as follows:
 
 .. code-block:: python
 
    import numpy as np
 
-   import py2dmat
-   import py2dmat.algorithm.min_search
-   import sxrd
+   import odatse
+   import odatse.algorithm.min_search
+   from odatse.extra.SXRD import Solver
 
-   info = py2dmat.Info.from_file("input.toml")
+   info = odatse.Info.from_file("input.toml")
 
-   solver = sxrd.Solver(info)
-   runner = py2dmat.Runner(solver, info)
-   alg = py2dmat.algorithm.min_search.Algorithm(info, runner)
+   solver = Solver(info)
+   runner = odatse.Runner(solver, info)
+   alg = odatse.algorithm.min_search.Algorithm(info, runner)
    alg.main()
 
 
 At the beginning of the program, the required modules are imported as listed below.
 
-- ``py2dmat`` for the main module of 2DMAT.
+- ``odatse`` for the main module of ODAT-SE.
 
-- ``py2dmat.algorithm.min_search`` for the module of the inverse problem algorithm used in this tutorial.
+- ``odatse.algorithm.min_search`` for the module of the inverse problem algorithm used in this tutorial.
 
-- ``sxrd`` for the direct problem solver module.
+- ``odatse.extra.SXRD`` for the direct problem solver module.
 
 Next, the instances of the classes are created.
 
-- ``py2dmat.Info`` class
+- ``odatse.Info`` class
 
   This class is for storing the parameters. It is created by calling a class method ``from_file`` with a path to TOML file as an argument.
 
-- ``sxrd.Solver`` class
+- ``odatse.extra.SXRD.Solver`` class
 
-  This class is for the direct problem solver of the 2DMAT-SXRD module. It is created by passing an instance of Info class.
+  This class is for the direct problem solver of the odatse-SXRD module. It is created by passing an instance of Info class.
 
-- ``py2dmat.Runner`` class
+- ``odatse.Runner`` class
 
   This class is for connecting the direct problem solver and the inverse problem algorithm. It is created by passing an instance of Solver class and an instance of Info class.
 
-- ``py2dmat.algorithm.min_search.Algorithm`` class
+- ``odatse.algorithm.min_search.Algorithm`` class
 
   This class is for the inverse problem algorithm. In this tutorial, we use ``min_search`` module that implements the optimization by Nelder-Mead method. It is created by passing an instance of Runner class.
 
@@ -90,9 +90,9 @@ In the above program, the input parameters are read from a file in TOML format. 
 
     import numpy as np
     
-    import py2dmat
-    import py2dmat.algorithm.min_search
-    import sxrd
+    import odatse
+    import odatse.algorithm.min_search
+    from odatse.extra.SXRD import Solver
     
     param = {
         "base": {
@@ -157,11 +157,11 @@ In the above program, the input parameters are read from a file in TOML format. 
         },
     }
     
-    info = py2dmat.Info(param)
+    info = odatse.Info(param)
     
-    solver = sxrd.Solver(info)
-    runner = py2dmat.Runner(solver, info)
-    alg = py2dmat.algorithm.min_search.Algorithm(info, runner)
+    solver = Solver(info)
+    runner = odatse.Runner(solver, info)
+    alg = odatse.algorithm.min_search.Algorithm(info, runner)
     alg.main()
 
 
