@@ -2,12 +2,17 @@
 
 set -e
 
+export PYTHONUNBUFFERED=1
+export OMPI_MCA_rmaps_base_oversubscribe=true
+
 #CMD=odatse-SXRD
 CMD="python3 ../../src/main.py"
 
-sh prepare.sh
+MPIEXEC=""
+#MPIEXEC="mpiexec -np 4"
 
-time $CMD input.toml
+
+time $MPIEXEC $CMD input.toml
 
 result=output/res.txt
 reference=ref.txt

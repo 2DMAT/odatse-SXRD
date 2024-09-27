@@ -24,15 +24,15 @@ import subprocess
 
 import numpy as np
 
-import py2dmat
-from py2dmat import exception
+import odatse
+from odatse import exception
 from .input import Input
 
-class Solver(py2dmat.solver.SolverBase):
+class Solver(odatse.solver.SolverBase):
     path_to_solver: Path
     dimension: int
 
-    def __init__(self, info: py2dmat.Info):
+    def __init__(self, info: odatse.Info):
         super().__init__(info)
 
         self._name = "sxrd"
