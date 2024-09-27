@@ -1,12 +1,12 @@
 import numpy as np
 
-import py2dmat
-import py2dmat.algorithm.min_search
-from odatse.extra.sxrd import Solver
+import odatse
+import odatse.algorithm.min_search
+from odatse.extra.SXRD import Solver
 
-info = py2dmat.Info.from_file("input.toml")
+info = odatse.Info.from_file("input.toml")
 
 solver = Solver(info)
-runner = py2dmat.Runner(solver, info)
-alg = py2dmat.algorithm.min_search.Algorithm(info, runner)
+runner = odatse.Runner(solver, info)
+alg = odatse.algorithm.min_search.Algorithm(info, runner)
 alg.main()
