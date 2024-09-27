@@ -9,14 +9,14 @@ readme = "README.md"
 repository = "https://github.com/2DMAT/odatse-SXRD"
 
 packages = [
-  { include = "sxrd", from = "src", to = "odatse/extra" }
+  { include = "SXRD", from = "src", to = "odatse/extra" }
   ]
 
 [tool.poetry.dependencies]
 python = ">=3.6.8"
 numpy = "^1.14"
 #mpi4py = {version = "^3", optional = true}
-py2dmat = "^2"
+ODAT-SE = ">2"
 
 #[tool.poetry.extras]
 #min_search = ["scipy"]
@@ -29,7 +29,7 @@ py2dmat = "^2"
 #pynvim = "^0.4.3"
 
 [tool.poetry.scripts]
-odatse-SXRD = "odatse.extra.sxrd._main:main"
+odatse-SXRD = "odatse.extra.SXRD._main:main"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
