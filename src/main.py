@@ -16,5 +16,5 @@
 
 if __name__ == "__main__":
     # sys.path[0] is this directory (2DMAT/src)
-    from odatse.extra.sxrd._main import main
+    from SXRD._main import main
     main()
