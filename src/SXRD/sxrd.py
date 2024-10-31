@@ -33,6 +33,12 @@ class Solver(odatse.solver.SolverBase):
     dimension: int
 
     def __init__(self, info: odatse.Info):
+        """
+        Initialize the Solver class.
+
+        Args:
+            info (odatse.Info): Information object containing solver configuration.
+        """
         super().__init__(info)
 
         self._name = "sxrd"
@@ -40,6 +46,17 @@ class Solver(odatse.solver.SolverBase):
 
         # Check keywords
         def check_keywords(key, segment, registered_list):
+            """
+            Check if a keyword is in the registered list.
+
+            Args:
+                key (str): The keyword to check.
+                segment (str): The segment where the keyword is used.
+                registered_list (list): List of registered keywords.
+
+            Raises:
+                RuntimeError: If the keyword is not in the registered list.
+            """
             if (key in registered_list) is False:
                 msg = "Error: {} in {} is not correct keyword.".format(key, segment)
                 raise RuntimeError(msg)
@@ -97,6 +114,18 @@ class Solver(odatse.solver.SolverBase):
         self.input = Input(info)
 
     def evaluate(self, x: np.ndarray, args = (), nprocs: int = 1, nthreads: int = 1) -> float:
+        """
+        Evaluate the solver with given parameters.
+
+        Args:
+            x (np.ndarray): Input array for evaluation.
+            args (tuple): Additional arguments for evaluation.
+            nprocs (int): Number of processes to use.
+            nthreads (int): Number of threads to use.
+
+        Returns:
+            float: The result of the evaluation.
+        """
         self.prepare(x, args)
         cwd = os.getcwd()
         os.chdir(self.work_dir)
@@ -106,6 +135,13 @@ class Solver(odatse.solver.SolverBase):
         return result
 
     def prepare(self, x: np.ndarray, args) -> None:
+        """
+        Prepare the input files and working directory for the solver.
+
+        Args:
+            x (np.ndarray): Input array for preparation.
+            args (tuple): Additional arguments for preparation.
+        """
         self.work_dir = self.proc_dir
         self.input.prepare(x, args)
         import shutil
@@ -116,8 +152,21 @@ class Solver(odatse.solver.SolverBase):
             )
 
     def run(self, nprocs: int = 1, nthreads: int = 1) -> None:
-        self._run_by_subprocess([str(self.path_to_solver), "lsfit.in"])
+        """
+        Run the solver using subprocess.
 
+        Args:
+            nprocs (int): Number of processes to use.
+            nthreads (int): Number of threads to use.
+        """
+        self._run_by_subprocess([str(self.path_to_solver), "lsfit.in"])
+def _run_by_subprocess(self, command: List[str]) -> None:
+    """
+    Run a command using subprocess and redirect output to a file.
+
+    Args:
+        command (List[str]): Command to run.
+    """
     def _run_by_subprocess(self, command: List[str]) -> None:
         with open("stdout", "w") as fi:
             subprocess.run(
@@ -128,6 +177,12 @@ class Solver(odatse.solver.SolverBase):
             )
 
     def get_results(self) -> float:
+        """
+        Retrieve the results from the solver output.
+
+        Returns:
+            float: The R-factor result from the solver output.
+        """
         # Get R-factor
         with open(os.path.join(self.work_dir, "stdout"), "r") as fr:
             lines = fr.readlines()

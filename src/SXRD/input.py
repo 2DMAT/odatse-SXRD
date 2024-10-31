@@ -25,6 +25,12 @@ class Input(object):
     dimension: int
 
     def __init__(self, info):
+        """
+        Initialize the Input class with the provided information.
+
+        Args:
+            info: An object containing base and solver information.
+        """
         self.dimension = info.base["dimension"]
         self.root_dir = info.base["root_dir"]
         self.output_dir = info.base["output_dir"]
@@ -48,6 +54,13 @@ class Input(object):
         )
 
     def prepare(self, x: np.ndarray, args):
+        """
+        Prepare the input for the optimization process.
+
+        Args:
+            x (np.ndarray): Numpy array of variables.
+            args: Additional arguments.
+        """
         x_list = x
         #step, iset = args
         #extra = iset > 0
@@ -57,6 +70,15 @@ class Input(object):
         self._write_fit_file(self.lattice_info, self.info_param, x_list)
 
     def _read_lattice_info(self, file_name: str):
+        """
+        Read lattice information from the specified file.
+
+        Args:
+            file_name (str): The name of the file to read from.
+
+        Returns:
+            str: Lattice information.
+        """
         with open(file_name, "r") as fr:
             lines = fr.readlines()
         # (a, b, c, alpha, beta, gamma)
@@ -64,6 +86,14 @@ class Input(object):
         return lattice_info
 
     def _write_input_file(self, info_config, info_reference, info_domain):
+        """
+        Write the input file for the optimization process.
+
+        Args:
+            info_config: Configuration information.
+            info_reference: Reference information.
+            info_domain: Domain information.
+        """
         with open("lsfit.in", "w") as fw:
             fw.write("do = ls_fit\n")
             fw.write(
@@ -94,6 +124,14 @@ class Input(object):
             fw.write("max_iteration = 0\n")
 
     def _write_fit_file(self, lattice_info: str, info_param, variables):
+        """
+        Write the fit file for the optimization process.
+
+        Args:
+            lattice_info (str): Lattice information.
+            info_param: Parameter information.
+            variables: Variables for the optimization process.
+        """
         type_vector = [type_idx for type_idx in info_param["type_vector"]]
         for idx, domain in enumerate(info_param["domain"]):
             with open("ls_{}.fit".format(idx + 1), "w") as fw:
