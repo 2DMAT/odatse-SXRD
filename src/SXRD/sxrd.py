@@ -36,8 +36,10 @@ class Solver(odatse.solver.SolverBase):
         """
         Initialize the Solver class.
 
-        Args:
-            info (odatse.Info): Information object containing solver configuration.
+        Parameters
+        ----------
+        info : odatse.Info
+            Information object containing solver configuration.
         """
         super().__init__(info)
 
@@ -49,13 +51,19 @@ class Solver(odatse.solver.SolverBase):
             """
             Check if a keyword is in the registered list.
 
-            Args:
-                key (str): The keyword to check.
-                segment (str): The segment where the keyword is used.
-                registered_list (list): List of registered keywords.
+            Parameters
+            ----------
+            key : str
+                The keyword to check.
+            segment : str
+                The segment where the keyword is used.
+            registered_list : list
+                List of registered keywords.
 
-            Raises:
-                RuntimeError: If the keyword is not in the registered list.
+            Raises
+            ------
+            RuntimeError
+                If the keyword is not in the registered list.
             """
             if (key in registered_list) is False:
                 msg = "Error: {} in {} is not correct keyword.".format(key, segment)
@@ -117,14 +125,21 @@ class Solver(odatse.solver.SolverBase):
         """
         Evaluate the solver with given parameters.
 
-        Args:
-            x (np.ndarray): Input array for evaluation.
-            args (tuple): Additional arguments for evaluation.
-            nprocs (int): Number of processes to use.
-            nthreads (int): Number of threads to use.
+        Parameters
+        ----------
+        x : np.ndarray
+            Input array for evaluation.
+        args : tuple
+            Additional arguments for evaluation.
+        nprocs : int
+            Number of processes to use.
+        nthreads : int
+            Number of threads to use.
 
-        Returns:
-            float: The result of the evaluation.
+        Returns
+        -------
+        float
+            The result of the evaluation.
         """
         self.prepare(x, args)
         cwd = os.getcwd()
@@ -138,9 +153,12 @@ class Solver(odatse.solver.SolverBase):
         """
         Prepare the input files and working directory for the solver.
 
-        Args:
-            x (np.ndarray): Input array for preparation.
-            args (tuple): Additional arguments for preparation.
+        Parameters
+        ----------
+        x : np.ndarray
+            Input array for preparation.
+        args : tuple
+            Additional arguments for preparation.
         """
         self.work_dir = self.proc_dir
         self.input.prepare(x, args)
@@ -155,19 +173,24 @@ class Solver(odatse.solver.SolverBase):
         """
         Run the solver using subprocess.
 
-        Args:
-            nprocs (int): Number of processes to use.
-            nthreads (int): Number of threads to use.
+        Parameters
+        ----------
+        nprocs : int
+            Number of processes to use.
+        nthreads : int
+            Number of threads to use.
         """
         self._run_by_subprocess([str(self.path_to_solver), "lsfit.in"])
-def _run_by_subprocess(self, command: List[str]) -> None:
-    """
-    Run a command using subprocess and redirect output to a file.
 
-    Args:
-        command (List[str]): Command to run.
-    """
     def _run_by_subprocess(self, command: List[str]) -> None:
+        """
+        Run a command using subprocess and redirect output to a file.
+
+        Parameters
+        ----------
+        command : List[str]
+            Command to run.
+        """
         with open("stdout", "w") as fi:
             subprocess.run(
                 command,
@@ -180,8 +203,10 @@ def _run_by_subprocess(self, command: List[str]) -> None:
         """
         Retrieve the results from the solver output.
 
-        Returns:
-            float: The R-factor result from the solver output.
+        Returns
+        -------
+        float
+            The R-factor result from the solver output.
         """
         # Get R-factor
         with open(os.path.join(self.work_dir, "stdout"), "r") as fr:
