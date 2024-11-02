@@ -1,0 +1,57 @@
+name: Run Tests
+
+on: [push, pull_request]
+
+jobs:
+  main:
+    strategy:
+      matrix:
+        # os: ['ubuntu-22.04']
+        # python-version: ['3.9', '3.12']
+        python-version: ['3.9']
+      fail-fast: false
+
+    name: Run tests with Python ${{ matrix.python-version }}
+    runs-on: 'ubuntu-22.04'
+    # runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: apt
+        run: |
+          sudo apt update
+          sudo apt install openmpi-bin libopenmpi-dev
+          sudo apt install libgsl-dev
+
+      - name: pip
+        run: |
+          python -m pip install -U pip
+          python -m pip install setuptools wheel
+          python -m pip install Cython
+          python -m pip install numpy scipy tomli mpi4py
+          python -m pip install pydantic
+          python -m pip install physbo
+
+      - name: install library
+        run: |
+          git clone https://github.com/issp-center-dev/ODAT-SE.git
+          cd ODAT-SE && python -m pip install .
+
+      - name: build solver
+        run: |
+          git clone https://github.com/sxrdcalc/sxrdcalc.git
+          cd sxrdcalc && make
+          cp sxrdcalc ${GITHUB_WORKSPACE}/tests/bin/
+
+      - name: run
+        run: |
+          mkdir build && cd build && cmake ..
+          ctest -V
