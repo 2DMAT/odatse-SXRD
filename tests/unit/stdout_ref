@@ -1,0 +1,55 @@
+
+---------------------------------------
+Program sxrdcalc for surface x-ray diffraction calculations.
+Version 3.3.3 - August 2019
+
+
+ Inputfile: lsfit.in
+Least-squares fit of model to experimental structure factors.
+   
+Number of domains: 1 
+
+Input file for experimental structure factors: sic111-r3xr3_f.dat
+Input file for bulk structure: sic111-r3xr3.blk
+Penetration depth: 100000000000000007629769841091887003294964970946560.00
+
+Fit Input file for domain 1: ls_1.fit
+Output file for domain 1: ls_1.sur
+Occupancy of domain 1: 1.000000
+
+ Fit parameters:
+  Number of fit runs: 1
+  Variation of start parameters for each run: 0.000000
+  Maximum number of iterations: 0
+  Absolute stopping criteria (delta_abs): 1.000000000000
+  Relative stopping criteria (delta_rel): 1.000000000000
+  Seed for random number generator: 0
+---------------------------------------
+
+
+-----------------------------
+ Fit Nr. 1
+Starting parameters:
+Parameter Nr. 0: 1.000000
+Parameter Nr. 1: 0.000000
+Parameter Nr. 2: 0.025000
+
+Fixed parameters:
+
+
+Fit results:
+Fit not converged after 0 iterations.
+Consider increasing the maximum number of iterations or find better starting values.
+chi^2 = 0.392738, chi^2 / (degree of freedom) = 0.008356 (Intensities)
+chi^2 = 0.376108, chi^2 / (degree of freedom) = 0.008002 (Structure factors)
+R = 0.000126
+
+Scale factor:   1.00000000000000 +/- 0.000263
+Parameter Nr. 1:   0.000000 +/- 0.000045
+Parameter Nr. 2:   0.025000 +/- 0.000227
+
+Covariance matrix:
+          0            1            2      
+ 0  0.0000000690 0.0000000017 0.0000000139
+ 1  0.0000000017 0.0000000020 0.0000000027
+ 2  0.0000000139 0.0000000027 0.0000000515
