@@ -2,15 +2,14 @@
 
 Open Data Analysis Tool for Science and Engineering (ODAT-SE) is a framework for applying a search algorithm to a direct problem solver to find the optimal solution. It has been developed by the name 2DMAT, and since version 3.0, it is organized as an open platform for data analysis by modularizing direct problem solvers and search algorithms.
 
-`sxrdcalc` has been developed as a software package for the analyses of the surface X-ray diffraction data, which calculates the X-ray diffraction intensity from surface, the Patterson map of experimental data, and the fitting of model structure to the experimental data by Levenberg-Marquadt method or simulated annealing method. odatse-SXRD is an adaptor library to use sxrdcalc as a direct problem solver of ODAT-SE.
+`sxrdcalc` has been developed as a software package for the analyses of the surface X-ray diffraction data, which calculates the X-ray diffraction intensity from surface, the Patterson map of experimental data, and the fitting of model structure to the experimental data by Levenberg-Marquadt method or simulated annealing method. odatse-SXRD is an adaptor library to use `sxrdcalc` as a direct problem solver of ODAT-SE.
 
 
-## Prerequists
+## Prerequisites
 
 - Required
-  - python >= 3.6.8
+  - python >= 3.9
   - numpy >= 1.14
-  - tomli >= 1.2.0
   - pydantic >= 2.0
   - ODAT-SE >= 3.0
   - sxrdcalc
@@ -23,7 +22,7 @@ Open Data Analysis Tool for Science and Engineering (ODAT-SE) is a framework for
 - From Source (For developers)
   1. update `pip >= 19` by `python3 -m pip install -U pip`
   2. `python3 -m pip install ODATSE_SXRD_ROOT_DIRECTORY` to install `odatse-SXRD` package and `odatse-SXRD` command
-    - `ODATSE_SXRD_ROOT_DIRECTORY` means the directory including this `README.md` file.
+    - `ODATSE_SXRD_ROOT_DIRECTORY` points to the directory including this `README.md` file.
 
 ## Simple Usage
 
