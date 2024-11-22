@@ -149,7 +149,7 @@ Nelder-Mead法による最適化
 
     $ cd sample/minsearch
 
-``surfcalc`` をコピーします。
+``sxrdcalc`` をコピーします。
 
 .. code-block::
 
