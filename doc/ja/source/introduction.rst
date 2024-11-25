@@ -52,11 +52,11 @@ Bibtex::
 
 odatse-SXRD
 
-- v1.0.0 : 2024-XX-XX
+- v1.0.0 : 2024-11-25
 
 ODAT-SE
 
-- v3.0.0 : 2024-XX-XX
+- v3.0.0 : 2024-11-25
 
 2DMAT
 
