@@ -1,0 +1,8 @@
+do = ls_fit
+bulk_struc_in_file = sic111-r3xr3.blk
+fit_struc_in_file1 = ls_1.fit
+fit_coord_out_file1 = ls_1.sur
+nr_domains = 1
+domain_occ1 = 1.0
+f_in_file = sic111-r3xr3_f.dat
+max_iteration = 0
