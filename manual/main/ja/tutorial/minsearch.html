@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Nelder-Mead法による最適化 &#8212; ODAT-SE solver module: odatse-SXRD 1.0-dev ドキュメント</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=f63d8bfa" />
+    <link rel="stylesheet" type="text/css" href="../_static/haiku.css?v=fce32b03" />
+    <script src="../_static/documentation_options.js?v=3b7831b5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/translations.js?v=4755f45a"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" />
+    <link rel="next" title="ユーザープログラムによる解析" href="user_program.html" />
+    <link rel="prev" title="チュートリアル" href="index.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../index.html">
+          <span>ODAT-SE solver module: odatse-SXRD 1.0-dev ドキュメント</span></a></h1>
+        <h2 class="heading"><span>Nelder-Mead法による最適化</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="Top">
+      
+        <p>
+        «&#160;&#160;<a href="index.html">チュートリアル</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../index.html">コンテンツ</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="user_program.html">ユーザープログラムによる解析</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="nelder-mead">
+<h1>Nelder-Mead法による最適化<a class="headerlink" href="#nelder-mead" title="Link to this heading">¶</a></h1>
+<p>ここでは、Nelder-Mead法を用いて回折データから原子座標を解析する逆問題の計算を行う方法について説明します。
+具体的な計算手順は以下の通りです。</p>
+<ol class="arabic">
+<li><p>参照ファイルの準備</p>
+<p>合わせたい参照ファイル (今回は後述する <code class="docutils literal notranslate"><span class="pre">sic111-r3xr3_f.dat</span></code> に相当)を準備する。</p>
+</li>
+<li><p>バルクデータの準備</p>
+<p>バルク部分のデータ (今回の例では <code class="docutils literal notranslate"><span class="pre">sic111-r3xr3.blk</span></code> に相当)を準備する。</p>
+</li>
+<li><p>メインプログラムの実行</p>
+<p><code class="docutils literal notranslate"><span class="pre">odatse-SXRD</span></code> を用いて計算を実行し原子座標を推定する。</p>
+</li>
+</ol>
+<p>メインプログラムでは、Nelder-Mead法 (<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html">scipy.optimize.minimize</a> を使用)を用いて、ソルバー(今回は <code class="docutils literal notranslate"><span class="pre">sxrdcalc</span></code> )を用いて得られた強度と、参照ファイル(<code class="docutils literal notranslate"><span class="pre">sic111-r3xr3_f.dat</span></code>)に記載された強度のずれ(R値)を最小化するパラメータを探索します。</p>
+<section id="id1">
+<h2>サンプルファイルの場所<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<p>サンプルファイルは <code class="docutils literal notranslate"><span class="pre">sample/minsearch</span></code> にあります。
+フォルダには以下のファイルが格納されています。</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">input.toml</span></code></p>
+<p>メインプログラムの入力ファイル</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sic111-r3xr3.blk</span></code>, <code class="docutils literal notranslate"><span class="pre">sic111-r3xr3_f.dat</span></code></p>
+<p>メインプログラムでの計算を進めるための参照ファイル</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ref_res.txt</span></code>, <code class="docutils literal notranslate"><span class="pre">ref_SimplexData.txt</span></code></p>
+<p>本チュートリアルで求めたい回答を記載したファイル</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">prepare.sh</span></code> , <code class="docutils literal notranslate"><span class="pre">do.sh</span></code></p>
+<p>本チュートリアルを一括計算するために準備されたスクリプト</p>
+</li>
+</ul>
+<p>以下、これらのファイルについて説明したあと、実際の計算結果を紹介します。</p>
+</section>
+<section id="id2">
+<h2>入力ファイルの説明<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<p>メインプログラム用の入力ファイル <code class="docutils literal notranslate"><span class="pre">input.toml</span></code> の準備をします。
+<code class="docutils literal notranslate"><span class="pre">input.toml</span></code> の詳細については入力ファイルに記載されています。
+ここでは、サンプルファイルにある <code class="docutils literal notranslate"><span class="pre">input.toml</span></code> の中身について説明します。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">base</span><span class="p">]</span>
+<span class="n">dimension</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="p">[</span><span class="n">solver</span><span class="p">]</span>
+<span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;sxrd&quot;</span>
+
+<span class="p">[</span><span class="n">solver</span><span class="o">.</span><span class="n">config</span><span class="p">]</span>
+<span class="n">sxrd_exec_file</span> <span class="o">=</span> <span class="s2">&quot;sxrdcalc&quot;</span>
+<span class="n">bulk_struc_in_file</span> <span class="o">=</span> <span class="s2">&quot;sic111-r3xr3.blk&quot;</span>
+<span class="p">[</span><span class="n">solver</span><span class="o">.</span><span class="n">param</span><span class="p">]</span>
+<span class="n">scale_factor</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">type_vector</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="p">[[</span><span class="n">solver</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">domain</span><span class="p">]]</span>
+<span class="n">domain_occupancy</span> <span class="o">=</span> <span class="mf">1.0</span>
+  <span class="p">[[</span><span class="n">solver</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">atom</span><span class="p">]]</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Si&quot;</span>
+    <span class="n">pos_center</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.00000000</span><span class="p">,</span> <span class="mf">0.00000000</span><span class="p">,</span> <span class="mf">1.00000000</span><span class="p">]</span>
+    <span class="n">DWfactor</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">occupancy</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">displace_vector</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
+  <span class="p">[[</span><span class="n">solver</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">atom</span><span class="p">]]</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Si&quot;</span>
+    <span class="n">pos_center</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.33333333</span><span class="p">,</span> <span class="mf">0.66666667</span><span class="p">,</span> <span class="mf">1.00000000</span><span class="p">]</span>
+    <span class="n">DWfactor</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">occupancy</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">displace_vector</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
+  <span class="p">[[</span><span class="n">solver</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">atom</span><span class="p">]]</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Si&quot;</span>
+    <span class="n">pos_center</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.66666667</span><span class="p">,</span> <span class="mf">0.33333333</span><span class="p">,</span> <span class="mf">1.00000000</span><span class="p">]</span>
+    <span class="n">DWfactor</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">occupancy</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">displace_vector</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
+  <span class="p">[[</span><span class="n">solver</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">atom</span><span class="p">]]</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Si&quot;</span>
+    <span class="n">pos_center</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.33333333</span><span class="p">,</span> <span class="mf">0.33333333</span><span class="p">,</span> <span class="mf">1.20000000</span><span class="p">]</span>
+    <span class="n">DWfactor</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">occupancy</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">displace_vector</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
+<span class="p">[</span><span class="n">solver</span><span class="o">.</span><span class="n">reference</span><span class="p">]</span>
+<span class="n">f_in_file</span> <span class="o">=</span> <span class="s2">&quot;sic111-r3xr3_f.dat&quot;</span>
+
+<span class="p">[</span><span class="n">algorithm</span><span class="p">]</span>
+<span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;minsearch&quot;</span>
+<span class="n">label_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;z1&quot;</span><span class="p">,</span> <span class="s2">&quot;z2&quot;</span><span class="p">]</span>
+<span class="p">[</span><span class="n">algorithm</span><span class="o">.</span><span class="n">param</span><span class="p">]</span>
+<span class="n">min_list</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">]</span>
+<span class="n">max_list</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">]</span>
+<span class="n">initial_list</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>最初に <code class="docutils literal notranslate"><span class="pre">[base]</span></code> セクションについて説明します。</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">dimension</span></code> は最適化したい変数の個数です。今の場合は2つの変数の最適化を行うので、 <code class="docutils literal notranslate"><span class="pre">2</span></code> を指定します。後述の <code class="docutils literal notranslate"><span class="pre">solver.config.type_vector</span></code> の項目数と一致させます。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">output_dir</span></code> は出力先のディレクトリ名です。省略した場合はプログラムを実行したディレクトリになります。</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">[solver]</span></code> セクションではメインプログラムの内部で使用するソルバーとその設定を指定します。</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code> は使用したいソルバーの名前です。 <code class="docutils literal notranslate"><span class="pre">sxrd</span></code> に固定されています。</p></li>
+</ul>
+<p>ソルバーの設定は、サブセクションの <code class="docutils literal notranslate"><span class="pre">[solver.config]</span></code>, <code class="docutils literal notranslate"><span class="pre">[solver.param]</span></code>, <code class="docutils literal notranslate"><span class="pre">[solver.reference]</span></code> で行います。</p>
+<p><code class="docutils literal notranslate"><span class="pre">[solver.config]</span></code> セクションではメインプログラム内部で呼び出す <code class="docutils literal notranslate"><span class="pre">sxrdcalc</span></code> についてのオプションを指定します。</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">sxrd_exec_file</span></code> は <code class="docutils literal notranslate"><span class="pre">sxrdcalc</span></code> のコマンド名です。パスを指定するか、コマンド名をPATH環境変数から検索します。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bulk_struc_in_file</span></code> はバルク構造ファイルを指定します。</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">[solver.param]</span></code> セクションでは <code class="docutils literal notranslate"><span class="pre">sxrdcalc</span></code> への入力パラメータを指定します。項目の詳細は入出力の章を参照してください。</p>
+<p><code class="docutils literal notranslate"><span class="pre">[solver.reference]</span></code> セクションでは、参照する実験データを指定します。</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">f_in_file</span></code> は実験データが置いてあるパスを指定します。</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">[algorithm]</span></code> セクションでは、使用するアルゴリスムとその設定をします。</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code> は使用したいアルゴリズムの名前で、このチュートリアルでは、Nelder-Mead法 を用いた解析を行うので、 <code class="docutils literal notranslate"><span class="pre">minsearch</span></code> を指定します。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">label_list</span></code> は、<code class="docutils literal notranslate"><span class="pre">value_0x</span></code> (x=1,2,3) を出力する際につけるラベル名のリストです。</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">[algorithm.param]</span></code> セクションでは、探索するパラメータの範囲や初期値を指定します。</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">min_list</span></code> と <code class="docutils literal notranslate"><span class="pre">max_list</span></code> はそれぞれ探索範囲の最小値と最大値を指定します。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">initial_list</span></code> は初期値を指定します。</p></li>
+</ul>
+<p>ここではデフォルト値を用いるため省略しましたが、その他のパラメータ、例えばNelder-Mead法で使用する収束判定などについては、<code class="docutils literal notranslate"><span class="pre">[algorithm]</span></code> セクションで行うことが可能です。
+詳細については入出力の章をご覧ください。</p>
+</section>
+<section id="id3">
+<h2>計算実行<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<p>最初にサンプルファイルが置いてあるフォルダへ移動します(以下、本ソフトウェアをダウンロードしたディレクトリ直下にいることを仮定します).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd sample/minsearch
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">sxrdcalc</span></code> をコピーします。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cp ../../sxrdcalc-main/sxrdcalc .
+</pre></div>
+</div>
+<p>そのあとに、メインプログラムを実行します(計算時間は通常のPCで数秒程度で終わります)。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ odatse-SXRD input.toml | tee log.txt
+</pre></div>
+</div>
+<p>実行すると、以下の様な出力がされます。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Optimization</span> <span class="n">terminated</span> <span class="n">successfully</span><span class="o">.</span>
+         <span class="n">Current</span> <span class="n">function</span> <span class="n">value</span><span class="p">:</span> <span class="mf">0.000106</span>
+         <span class="n">Iterations</span><span class="p">:</span> <span class="mi">26</span>
+         <span class="n">Function</span> <span class="n">evaluations</span><span class="p">:</span> <span class="mi">53</span>
+<span class="n">iteration</span><span class="p">:</span> <span class="mi">26</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">allvecs</span><span class="p">):</span> <span class="mi">27</span>
+<span class="n">step</span><span class="p">:</span> <span class="mi">0</span>
+<span class="n">allvecs</span><span class="p">[</span><span class="n">step</span><span class="p">]:</span> <span class="p">[</span><span class="mf">0.</span> <span class="mf">0.</span><span class="p">]</span>
+<span class="n">step</span><span class="p">:</span> <span class="mi">1</span>
+<span class="n">allvecs</span><span class="p">[</span><span class="n">step</span><span class="p">]:</span> <span class="p">[</span><span class="mf">0.</span> <span class="mf">0.</span><span class="p">]</span>
+<span class="n">step</span><span class="p">:</span> <span class="mi">2</span>
+<span class="n">allvecs</span><span class="p">[</span><span class="n">step</span><span class="p">]:</span> <span class="p">[</span><span class="mf">0.</span> <span class="mf">0.</span><span class="p">]</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">z1</span></code>, <code class="docutils literal notranslate"><span class="pre">z2</span></code> に各ステップでの候補パラメータと、その時の <code class="docutils literal notranslate"><span class="pre">R-factor</span></code> が出力されます。
+最終的に推定されたパラメータは、 <code class="docutils literal notranslate"><span class="pre">output/res.dat</span></code> に出力されます。今の場合、</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fx</span> <span class="o">=</span> <span class="mf">0.000106</span>
+<span class="n">z1</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.351035891479114e-05</span>
+<span class="n">z2</span> <span class="o">=</span> <span class="mf">0.025129315870799473</span>
+</pre></div>
+</div>
+<p>が得られ、正解のデータ <code class="docutils literal notranslate"><span class="pre">ref.txt</span></code> と同じ値が得られていることがわかります。
+なお、一括計算するスクリプトとして <code class="docutils literal notranslate"><span class="pre">do.sh</span></code> を用意しています。
+<code class="docutils literal notranslate"><span class="pre">do.sh</span></code> では <code class="docutils literal notranslate"><span class="pre">output/res.txt</span></code> と <code class="docutils literal notranslate"><span class="pre">ref.txt</span></code> の差分も比較しています。
+以下、説明は割愛しますが、その中身を掲載します。</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
+
+sh<span class="w"> </span>./prepare.sh
+
+./bulk.exe
+
+<span class="nb">time</span><span class="w"> </span>odatse-SXRD<span class="w"> </span>input.toml<span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>log.txt
+
+<span class="nb">echo</span><span class="w"> </span>diff<span class="w"> </span>output/res.txt<span class="w"> </span>ref.txt
+<span class="nv">res</span><span class="o">=</span><span class="m">0</span>
+diff<span class="w"> </span>output/res.txt<span class="w"> </span>ref.txt<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nv">res</span><span class="o">=</span><span class="nv">$?</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="nv">$res</span><span class="w"> </span>-eq<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span>Test<span class="w"> </span>PASS
+<span class="w">  </span><span class="nb">true</span>
+<span class="k">else</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span>Test<span class="w"> </span>FAILED:<span class="w"> </span>res.txt<span class="w"> </span>and<span class="w"> </span>ref.txt<span class="w"> </span>differ
+<span class="w">  </span><span class="nb">false</span>
+<span class="k">fi</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="Bottom">
+      
+        <p>
+        «&#160;&#160;<a href="index.html">チュートリアル</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../index.html">コンテンツ</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="user_program.html">ユーザープログラムによる解析</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+    &#169; 著作権 2020-, Institute for Solid State Physics, University of Tokyo.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    </div>
+  </body>
+</html>

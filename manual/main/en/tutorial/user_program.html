@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Analyses by user programs &#8212; ODAT-SE solver module: odatse-SXRD 1.0-dev documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/haiku.css?v=fce32b03" />
+    <script src="../_static/documentation_options.js?v=a2628a1b"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Input and output" href="../solver.html" />
+    <link rel="prev" title="Optimization by Nelder-Mead method" href="minsearch.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../index.html">
+          <span>ODAT-SE solver module: odatse-SXRD 1.0-dev documentation</span></a></h1>
+        <h2 class="heading"><span>Analyses by user programs</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="Top">
+      
+        <p>
+        «&#160;&#160;<a href="minsearch.html">Optimization by Nelder-Mead method</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="../solver.html">Input and output</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="analyses-by-user-programs">
+<h1>Analyses by user programs<a class="headerlink" href="#analyses-by-user-programs" title="Link to this heading">¶</a></h1>
+<p>In this tutorial, we will write a user program using odatse-SXRD module and perform analyese. As an example, we adopt Nelder-Mead method for the inverse problem algorithm.</p>
+<section id="location-of-the-sample-files">
+<h2>Location of the sample files<a class="headerlink" href="#location-of-the-sample-files" title="Link to this heading">¶</a></h2>
+<p>The sample files are located in <code class="docutils literal notranslate"><span class="pre">sample/user_program</span></code>.
+The following files are stored in the folder.</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">simple.py</span></code></p>
+<p>Source file of the main program. This program reads <code class="docutils literal notranslate"><span class="pre">input.toml</span></code> for the parameters.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">input.toml</span></code></p>
+<p>Input file of the main program.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sic111-r3xr3.blk</span></code>, <code class="docutils literal notranslate"><span class="pre">sic111-r3xr3_f.dat</span></code></p>
+<p>Reference files to proceed with calculations in the main program.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ref_res.txt</span></code>, <code class="docutils literal notranslate"><span class="pre">ref_SimplexData.txt</span></code></p>
+<p>The files containing the answers you want to seek in this tutorial.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">simple2.py</span></code></p>
+<p>Another version of source file of the main program. The parameters are embedded in the program as a dict.</p>
+</li>
+</ul>
+<p>The following sections describe these files and then show the actual calculation results.</p>
+</section>
+<section id="description-of-main-program">
+<h2>Description of main program<a class="headerlink" href="#description-of-main-program" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">simple.py</span></code> is a simple program for the analyses using odatse-SXRD module.
+The entire source file is shown as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">odatse</span>
+<span class="kn">import</span> <span class="nn">odatse.algorithm.min_search</span>
+<span class="kn">from</span> <span class="nn">odatse.extra.SXRD</span> <span class="kn">import</span> <span class="n">Solver</span>
+
+<span class="n">info</span> <span class="o">=</span> <span class="n">odatse</span><span class="o">.</span><span class="n">Info</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s2">&quot;input.toml&quot;</span><span class="p">)</span>
+
+<span class="n">solver</span> <span class="o">=</span> <span class="n">Solver</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+<span class="n">runner</span> <span class="o">=</span> <span class="n">odatse</span><span class="o">.</span><span class="n">Runner</span><span class="p">(</span><span class="n">solver</span><span class="p">,</span> <span class="n">info</span><span class="p">)</span>
+<span class="n">alg</span> <span class="o">=</span> <span class="n">odatse</span><span class="o">.</span><span class="n">algorithm</span><span class="o">.</span><span class="n">min_search</span><span class="o">.</span><span class="n">Algorithm</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">runner</span><span class="p">)</span>
+<span class="n">alg</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>At the beginning of the program, the required modules are imported as listed below.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">odatse</span></code> for the main module of ODAT-SE.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">odatse.algorithm.min_search</span></code> for the module of the inverse problem algorithm used in this tutorial.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">odatse.extra.SXRD</span></code> for the direct problem solver module.</p></li>
+</ul>
+<p>Next, the instances of the classes are created.</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">odatse.Info</span></code> class</p>
+<p>This class is for storing the parameters. It is created by calling a class method <code class="docutils literal notranslate"><span class="pre">from_file</span></code> with a path to TOML file as an argument.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">odatse.extra.SXRD.Solver</span></code> class</p>
+<p>This class is for the direct problem solver of the odatse-SXRD module. It is created by passing an instance of Info class.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">odatse.Runner</span></code> class</p>
+<p>This class is for connecting the direct problem solver and the inverse problem algorithm. It is created by passing an instance of Solver class and an instance of Info class.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">odatse.algorithm.min_search.Algorithm</span></code> class</p>
+<p>This class is for the inverse problem algorithm. In this tutorial, we use <code class="docutils literal notranslate"><span class="pre">min_search</span></code> module that implements the optimization by Nelder-Mead method. It is created by passing an instance of Runner class.</p>
+</li>
+</ul>
+<p>After creating the instances of Solver, Runner, and Algorithm in this order, we invoke <code class="docutils literal notranslate"><span class="pre">main()</span></code> method of the Algorithm class to start analyses.</p>
+<p>In the above program, the input parameters are read from a file in TOML format. It is also possible to take the parameters in the form of dictionary.
+<code class="docutils literal notranslate"><span class="pre">simple2.py</span></code> is anther version of the main program in which the parameters are embedded in the program. The entire source file is shown below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">odatse</span>
+<span class="kn">import</span> <span class="nn">odatse.algorithm.min_search</span>
+<span class="kn">from</span> <span class="nn">odatse.extra.SXRD</span> <span class="kn">import</span> <span class="n">Solver</span>
+
+<span class="n">param</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;base&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;dimension&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;output_dir&quot;</span><span class="p">:</span> <span class="s2">&quot;output&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;solver&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;config&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;sxrd_exec_file&quot;</span><span class="p">:</span> <span class="s2">&quot;sxrdcalc&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;bulk_struc_in_file&quot;</span><span class="p">:</span> <span class="s2">&quot;sic111-r3xr3.blk&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;param&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;scale_factor&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+            <span class="s2">&quot;type_vector&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+            <span class="s2">&quot;domain&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;domain_occupancy&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+                    <span class="s2">&quot;atom&quot;</span><span class="p">:</span> <span class="p">[</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Si&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;pos_center&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.00000000</span><span class="p">,</span> <span class="mf">0.00000000</span><span class="p">,</span> <span class="mf">1.00000000</span><span class="p">],</span>
+                            <span class="s2">&quot;DWfactor&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                            <span class="s2">&quot;occupancy&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+                            <span class="s2">&quot;displace_vector&quot;</span><span class="p">:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
+                        <span class="p">},</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Si&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;pos_center&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.33333333</span><span class="p">,</span> <span class="mf">0.66666667</span><span class="p">,</span> <span class="mf">1.00000000</span><span class="p">],</span>
+                            <span class="s2">&quot;DWfactor&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                            <span class="s2">&quot;occupancy&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+                            <span class="s2">&quot;displace_vector&quot;</span><span class="p">:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
+                        <span class="p">},</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Si&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;pos_center&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.66666667</span><span class="p">,</span> <span class="mf">0.33333333</span><span class="p">,</span> <span class="mf">1.00000000</span><span class="p">],</span>
+                            <span class="s2">&quot;DWfactor&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                            <span class="s2">&quot;occupancy&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+                            <span class="s2">&quot;displace_vector&quot;</span><span class="p">:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
+                        <span class="p">},</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Si&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;pos_center&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.33333333</span><span class="p">,</span> <span class="mf">0.33333333</span><span class="p">,</span> <span class="mf">1.20000000</span><span class="p">],</span>
+                            <span class="s2">&quot;DWfactor&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                            <span class="s2">&quot;occupancy&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+                            <span class="s2">&quot;displace_vector&quot;</span><span class="p">:</span> <span class="p">[[</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
+                        <span class="p">},</span>
+                    <span class="p">],</span>
+                <span class="p">},</span>
+            <span class="p">],</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;reference&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;f_in_file&quot;</span><span class="p">:</span> <span class="s2">&quot;sic111-r3xr3_f.dat&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;algorithm&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;label_list&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;z1&quot;</span><span class="p">,</span> <span class="s2">&quot;z2&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;param&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;min_list&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">],</span>
+            <span class="s2">&quot;max_list&quot;</span><span class="p">:</span> <span class="p">[</span> <span class="mf">0.2</span><span class="p">,</span>  <span class="mf">0.2</span><span class="p">],</span>
+            <span class="s2">&quot;initial_list&quot;</span><span class="p">:</span> <span class="p">[</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span> <span class="p">],</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+
+<span class="n">info</span> <span class="o">=</span> <span class="n">odatse</span><span class="o">.</span><span class="n">Info</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+
+<span class="n">solver</span> <span class="o">=</span> <span class="n">Solver</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+<span class="n">runner</span> <span class="o">=</span> <span class="n">odatse</span><span class="o">.</span><span class="n">Runner</span><span class="p">(</span><span class="n">solver</span><span class="p">,</span> <span class="n">info</span><span class="p">)</span>
+<span class="n">alg</span> <span class="o">=</span> <span class="n">odatse</span><span class="o">.</span><span class="n">algorithm</span><span class="o">.</span><span class="n">min_search</span><span class="o">.</span><span class="n">Algorithm</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">runner</span><span class="p">)</span>
+<span class="n">alg</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>An instance of Info class is created by passing a set of parameters in a dict form.
+It is also possible to generate the parameters within the program before passing to the class.</p>
+</section>
+<section id="input-files">
+<h2>Input files<a class="headerlink" href="#input-files" title="Link to this heading">¶</a></h2>
+<p>The input file <code class="docutils literal notranslate"><span class="pre">input.toml</span></code> for the main program is the same as that used in the previous tutorial for Nelder-Mead method.
+Except, <code class="docutils literal notranslate"><span class="pre">algorithm.name</span></code> parameter for specifying the algorithm type should be ignored.</p>
+<p>The reference files are the same as those in the previous tutorials.</p>
+</section>
+<section id="calculation-execution">
+<h2>Calculation execution<a class="headerlink" href="#calculation-execution" title="Link to this heading">¶</a></h2>
+<p>First, move to the folder where the sample files are located. (We assume that you are directly under the directory where you downloaded this software.)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd sample/user_program
+</pre></div>
+</div>
+<p>Copy <code class="docutils literal notranslate"><span class="pre">sxrdcalc</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cp ../../sxrdcalc-main/sxrdcalc .
+</pre></div>
+</div>
+<p>Run the main program. The computation time will take only a few seconds on a normal PC.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python3 simple.py | tee log.txt
+</pre></div>
+</div>
+<p>The standard output will look as follows.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Optimization</span> <span class="n">terminated</span> <span class="n">successfully</span><span class="o">.</span>
+         <span class="n">Current</span> <span class="n">function</span> <span class="n">value</span><span class="p">:</span> <span class="mf">0.000106</span>
+         <span class="n">Iterations</span><span class="p">:</span> <span class="mi">26</span>
+         <span class="n">Function</span> <span class="n">evaluations</span><span class="p">:</span> <span class="mi">53</span>
+<span class="n">iteration</span><span class="p">:</span> <span class="mi">26</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">allvecs</span><span class="p">):</span> <span class="mi">27</span>
+<span class="n">step</span><span class="p">:</span> <span class="mi">0</span>
+<span class="n">allvecs</span><span class="p">[</span><span class="n">step</span><span class="p">]:</span> <span class="p">[</span><span class="mf">0.</span> <span class="mf">0.</span><span class="p">]</span>
+<span class="n">step</span><span class="p">:</span> <span class="mi">1</span>
+<span class="n">allvecs</span><span class="p">[</span><span class="n">step</span><span class="p">]:</span> <span class="p">[</span><span class="mf">0.</span> <span class="mf">0.</span><span class="p">]</span>
+<span class="n">step</span><span class="p">:</span> <span class="mi">2</span>
+<span class="n">allvecs</span><span class="p">[</span><span class="n">step</span><span class="p">]:</span> <span class="p">[</span><span class="mf">0.</span> <span class="mf">0.</span><span class="p">]</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">z1</span></code> and <code class="docutils literal notranslate"><span class="pre">z2</span></code> are the candidate parameters at each step, and <code class="docutils literal notranslate"><span class="pre">R-factor</span></code> is the function value at that point.
+The final estimated parameters will be written to <code class="docutils literal notranslate"><span class="pre">output/res.dat</span></code>.
+In the current case, the following result will be obtained:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fx</span> <span class="o">=</span> <span class="mf">0.000106</span>
+<span class="n">z1</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.351035891479114e-05</span>
+<span class="n">z2</span> <span class="o">=</span> <span class="mf">0.025129315870799473</span>
+</pre></div>
+</div>
+<p>You can see that we will get the same values as the correct answer data in <code class="docutils literal notranslate"><span class="pre">ref.txt</span></code>.</p>
+</section>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="Bottom">
+      
+        <p>
+        «&#160;&#160;<a href="minsearch.html">Optimization by Nelder-Mead method</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="../solver.html">Input and output</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2020-, Institute for Solid State Physics, University of Tokyo.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    </div>
+  </body>
+</html>

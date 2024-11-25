@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Optimization by Nelder-Mead method &#8212; ODAT-SE solver module: odatse-SXRD 1.0-dev documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/haiku.css?v=fce32b03" />
+    <script src="../_static/documentation_options.js?v=a2628a1b"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Analyses by user programs" href="user_program.html" />
+    <link rel="prev" title="Tutorials" href="index.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../index.html">
+          <span>ODAT-SE solver module: odatse-SXRD 1.0-dev documentation</span></a></h1>
+        <h2 class="heading"><span>Optimization by Nelder-Mead method</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="Top">
+      
+        <p>
+        «&#160;&#160;<a href="index.html">Tutorials</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="user_program.html">Analyses by user programs</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="optimization-by-nelder-mead-method">
+<h1>Optimization by Nelder-Mead method<a class="headerlink" href="#optimization-by-nelder-mead-method" title="Link to this heading">¶</a></h1>
+<p>In this section, we will explain how to calculate the inverse problem of analyzing atomic coordinates from diffraction data using the Nelder-Mead method.
+The specific calculation procedure is as follows.</p>
+<ol class="arabic">
+<li><p>Preparation of the reference file</p>
+<p>Prepare the reference file to be matched (in this tutorial, it corresponds to <code class="docutils literal notranslate"><span class="pre">sic111-r3xr3_f.dat</span></code> described below).</p>
+</li>
+<li><p>Preparation of the bulk data</p>
+<p>Prepare the data for bulk part (in this tutorial, it corresponds to <code class="docutils literal notranslate"><span class="pre">sic111-r3xr3.blk</span></code>).</p>
+</li>
+<li><p>Run the main program</p>
+<p>Run the calculation using <code class="docutils literal notranslate"><span class="pre">odatse-SXRD</span></code> to estimate the atomic coordinates.</p>
+</li>
+</ol>
+<p>In the main program, the Nelder-Mead method implemented in <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.fmin.html">scipy.optimize.fmin</a> is applied to find the parameter that minimizes the deviation (R-value) between the intensity obtained using the solver (in this case <code class="docutils literal notranslate"><span class="pre">sxrdcalc</span></code>) and the intensity listed in the reference file (<code class="docutils literal notranslate"><span class="pre">sic111-r3xr3_f.dat</span></code>).</p>
+<section id="location-of-the-sample-files">
+<h2>Location of the sample files<a class="headerlink" href="#location-of-the-sample-files" title="Link to this heading">¶</a></h2>
+<p>The sample files are located in <code class="docutils literal notranslate"><span class="pre">sample/minsearch</span></code>.
+The following files are stored in the folder.</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">input.toml</span></code></p>
+<p>Input file of the main program.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sic111-r3xr3.blk</span></code>, <code class="docutils literal notranslate"><span class="pre">sic111-r3xr3_f.dat</span></code></p>
+<p>Reference files to proceed with calculations in the main program.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ref_res.txt</span></code>, <code class="docutils literal notranslate"><span class="pre">ref_SimplexData.txt</span></code></p>
+<p>The files containing the answers you want to seek in this tutorial.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">prepare.sh</span></code> , <code class="docutils literal notranslate"><span class="pre">do.sh</span></code></p>
+<p>Script prepared for doing all calculation of this tutorial</p>
+</li>
+</ul>
+<p>The following sections describe these files and then show the actual calculation results.</p>
+</section>
+<section id="input-files">
+<h2>Input files<a class="headerlink" href="#input-files" title="Link to this heading">¶</a></h2>
+<p>In this section, we prepare the input file <code class="docutils literal notranslate"><span class="pre">input.toml</span></code> for the main program.
+The details can be found in the input file section in the manual.
+The content of <code class="docutils literal notranslate"><span class="pre">input.toml</span></code> is shown below.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">base</span><span class="p">]</span>
+<span class="n">dimension</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">output_dir</span> <span class="o">=</span> <span class="s2">&quot;output&quot;</span>
+
+<span class="p">[</span><span class="n">solver</span><span class="p">]</span>
+<span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;sxrd&quot;</span>
+
+<span class="p">[</span><span class="n">solver</span><span class="o">.</span><span class="n">config</span><span class="p">]</span>
+<span class="n">sxrd_exec_file</span> <span class="o">=</span> <span class="s2">&quot;sxrdcalc&quot;</span>
+<span class="n">bulk_struc_in_file</span> <span class="o">=</span> <span class="s2">&quot;sic111-r3xr3.blk&quot;</span>
+<span class="p">[</span><span class="n">solver</span><span class="o">.</span><span class="n">param</span><span class="p">]</span>
+<span class="n">scale_factor</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">type_vector</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="p">[[</span><span class="n">solver</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">domain</span><span class="p">]]</span>
+<span class="n">domain_occupancy</span> <span class="o">=</span> <span class="mf">1.0</span>
+  <span class="p">[[</span><span class="n">solver</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">atom</span><span class="p">]]</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Si&quot;</span>
+    <span class="n">pos_center</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.00000000</span><span class="p">,</span> <span class="mf">0.00000000</span><span class="p">,</span> <span class="mf">1.00000000</span><span class="p">]</span>
+    <span class="n">DWfactor</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">occupancy</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">displace_vector</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
+  <span class="p">[[</span><span class="n">solver</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">atom</span><span class="p">]]</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Si&quot;</span>
+    <span class="n">pos_center</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.33333333</span><span class="p">,</span> <span class="mf">0.66666667</span><span class="p">,</span> <span class="mf">1.00000000</span><span class="p">]</span>
+    <span class="n">DWfactor</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">occupancy</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">displace_vector</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
+  <span class="p">[[</span><span class="n">solver</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">atom</span><span class="p">]]</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Si&quot;</span>
+    <span class="n">pos_center</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.66666667</span><span class="p">,</span> <span class="mf">0.33333333</span><span class="p">,</span> <span class="mf">1.00000000</span><span class="p">]</span>
+    <span class="n">DWfactor</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">occupancy</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">displace_vector</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
+  <span class="p">[[</span><span class="n">solver</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">atom</span><span class="p">]]</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Si&quot;</span>
+    <span class="n">pos_center</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.33333333</span><span class="p">,</span> <span class="mf">0.33333333</span><span class="p">,</span> <span class="mf">1.20000000</span><span class="p">]</span>
+    <span class="n">DWfactor</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">occupancy</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">displace_vector</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
+<span class="p">[</span><span class="n">solver</span><span class="o">.</span><span class="n">reference</span><span class="p">]</span>
+<span class="n">f_in_file</span> <span class="o">=</span> <span class="s2">&quot;sic111-r3xr3_f.dat&quot;</span>
+
+<span class="p">[</span><span class="n">algorithm</span><span class="p">]</span>
+<span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;minsearch&quot;</span>
+<span class="n">label_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;z1&quot;</span><span class="p">,</span> <span class="s2">&quot;z2&quot;</span><span class="p">]</span>
+<span class="p">[</span><span class="n">algorithm</span><span class="o">.</span><span class="n">param</span><span class="p">]</span>
+<span class="n">min_list</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">]</span>
+<span class="n">max_list</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">]</span>
+<span class="n">initial_list</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>First, <code class="docutils literal notranslate"><span class="pre">[base]</span></code> section is explained.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">dimension</span></code> is the number of variables to be optimized. In this case it is <code class="docutils literal notranslate"><span class="pre">2</span></code> since we are optimizing two variables as described in <code class="docutils literal notranslate"><span class="pre">template.txt</span></code>. It should match the number of elements of <code class="docutils literal notranslate"><span class="pre">solver.config.type_vector</span></code> described below.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">output_dir</span></code> is the name of directory for the outputs. If it is omitted, the results are written in the directory in which the program is executed.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">[solver]</span></code> section specifies the solver to be used inside the main program and its settings.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code> is the name of the solver you want to use. In this tutorial it is <code class="docutils literal notranslate"><span class="pre">sxrd</span></code>.</p></li>
+</ul>
+<p>The solver can be configured in the subsections <code class="docutils literal notranslate"><span class="pre">[solver.config]</span></code>, <code class="docutils literal notranslate"><span class="pre">[solver.param]</span></code>, and <code class="docutils literal notranslate"><span class="pre">[solver.reference]</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">[solver.config]</span></code> section specifies options for reading the output file produced by <code class="docutils literal notranslate"><span class="pre">sxrdcalc</span></code> that is called from the main program.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">sxrd_exec_file</span></code> is the command name of <code class="docutils literal notranslate"><span class="pre">sxrdcalc</span></code>. It is specified as a path to the executable file, or searched from the PATH environment variable.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bulk_struc_in_file</span></code> specifies the bulk structure file.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">[solver.param]</span></code> section specifies options for the input file passed to <code class="docutils literal notranslate"><span class="pre">sxrdcalc</span></code> that is to be called from the main program.
+For the details of parameters, see the input and output section of the manual.</p>
+<p><code class="docutils literal notranslate"><span class="pre">[solver.reference]</span></code> section specifies the location of the experimental data.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">f_in_file</span></code> specifies the path to the experimental data.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">[algorithm]</span></code> section specifies the algorithm to use and its settings.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code> is the name of the algorithm you want to use. In this tutorial, it is set to <code class="docutils literal notranslate"><span class="pre">minsearch</span></code>, since we are using the Nelder-Mead method.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">label_list</span></code> is a list of label names to be attached to the output of <code class="docutils literal notranslate"><span class="pre">value_0x</span></code> (x=1,2,3).</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">[algorithm.param]</span></code> section specifies the range of parameters to search and their initial values.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">min_list</span></code> and <code class="docutils literal notranslate"><span class="pre">max_list</span></code> specify the minimum and maximum values of the search range, respectively.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">initial_list</span></code> specifies the initial values.</p></li>
+</ul>
+<p>Other parameters, such as convergence criteria used in the Nelder-Mead method, can be set in the <code class="docutils literal notranslate"><span class="pre">[algorithm]</span></code> section, although they are omitted here so that the default values are used.
+See the input file section of the manual for details.</p>
+</section>
+<section id="calculation-execution">
+<h2>Calculation execution<a class="headerlink" href="#calculation-execution" title="Link to this heading">¶</a></h2>
+<p>First, move to the folder where the sample files are located. (We assume that you are directly under the directory where you downloaded this software.)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd sample/minsearch
+</pre></div>
+</div>
+<p>Copy <code class="docutils literal notranslate"><span class="pre">sxrdcalc</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cp ../../sxrdcalc-main/sxrdcalc .
+</pre></div>
+</div>
+<p>Run the main program. The computation time will take only a few seconds on a normal PC.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ odatse-SXRD input.toml | tee log.txt
+</pre></div>
+</div>
+<p>Then, the standard output will look as follows.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Optimization</span> <span class="n">terminated</span> <span class="n">successfully</span><span class="o">.</span>
+         <span class="n">Current</span> <span class="n">function</span> <span class="n">value</span><span class="p">:</span> <span class="mf">0.000106</span>
+         <span class="n">Iterations</span><span class="p">:</span> <span class="mi">26</span>
+         <span class="n">Function</span> <span class="n">evaluations</span><span class="p">:</span> <span class="mi">53</span>
+<span class="n">iteration</span><span class="p">:</span> <span class="mi">26</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">allvecs</span><span class="p">):</span> <span class="mi">27</span>
+<span class="n">step</span><span class="p">:</span> <span class="mi">0</span>
+<span class="n">allvecs</span><span class="p">[</span><span class="n">step</span><span class="p">]:</span> <span class="p">[</span><span class="mf">0.</span> <span class="mf">0.</span><span class="p">]</span>
+<span class="n">step</span><span class="p">:</span> <span class="mi">1</span>
+<span class="n">allvecs</span><span class="p">[</span><span class="n">step</span><span class="p">]:</span> <span class="p">[</span><span class="mf">0.</span> <span class="mf">0.</span><span class="p">]</span>
+<span class="n">step</span><span class="p">:</span> <span class="mi">2</span>
+<span class="n">allvecs</span><span class="p">[</span><span class="n">step</span><span class="p">]:</span> <span class="p">[</span><span class="mf">0.</span> <span class="mf">0.</span><span class="p">]</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">z1</span></code> and <code class="docutils literal notranslate"><span class="pre">z2</span></code> are the candidate parameters at each step, and <code class="docutils literal notranslate"><span class="pre">R-factor</span></code> is the function value at that point.
+The final estimated parameters will be written to <code class="docutils literal notranslate"><span class="pre">output/res.dat</span></code>.
+In the current case, the following result will be obtained:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fx</span> <span class="o">=</span> <span class="mf">0.000106</span>
+<span class="n">z1</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.351035891479114e-05</span>
+<span class="n">z2</span> <span class="o">=</span> <span class="mf">0.025129315870799473</span>
+</pre></div>
+</div>
+<p>You can see that we will get the same values as the correct answer data in <code class="docutils literal notranslate"><span class="pre">ref.txt</span></code>.</p>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">do.sh</span></code> is available as a script for batch calculation.
+In <code class="docutils literal notranslate"><span class="pre">do.sh</span></code>, <code class="docutils literal notranslate"><span class="pre">res.txt</span></code> and <code class="docutils literal notranslate"><span class="pre">ref.txt</span></code> are also compared for the check.
+Here is what it does, without further explanation.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
+
+sh<span class="w"> </span>./prepare.sh
+
+./bulk.exe
+
+<span class="nb">time</span><span class="w"> </span>odatse-SXRD<span class="w"> </span>input.toml<span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>log.txt
+
+<span class="nb">echo</span><span class="w"> </span>diff<span class="w"> </span>output/res.txt<span class="w"> </span>ref.txt
+<span class="nv">res</span><span class="o">=</span><span class="m">0</span>
+diff<span class="w"> </span>output/res.txt<span class="w"> </span>ref.txt<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nv">res</span><span class="o">=</span><span class="nv">$?</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="nv">$res</span><span class="w"> </span>-eq<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span>Test<span class="w"> </span>PASS
+<span class="w">  </span><span class="nb">true</span>
+<span class="k">else</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span>Test<span class="w"> </span>FAILED:<span class="w"> </span>res.txt<span class="w"> </span>and<span class="w"> </span>ref.txt<span class="w"> </span>differ
+<span class="w">  </span><span class="nb">false</span>
+<span class="k">fi</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="Bottom">
+      
+        <p>
+        «&#160;&#160;<a href="index.html">Tutorials</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="user_program.html">Analyses by user programs</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2020-, Institute for Solid State Physics, University of Tokyo.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    </div>
+  </body>
+</html>
