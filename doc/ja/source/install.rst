@@ -3,12 +3,12 @@ odatse-SXRD のインストール
 
 実行環境・必要なパッケージ
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-- python 3.6.8 以上
+- python 3.9 以上
 
     - 必要なpythonパッケージ
 
-        - tomli (>= 1.2)
         - numpy (>= 1.14)
+        - pydantic (>= 2.0)
 
 - ODAT-SE version 3.0 以降
 
