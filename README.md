@@ -1,6 +1,6 @@
 # odatse-SXRD: solver module for analyses of SXRD data
 
-Open Data Analysis Tool for Science and Engineering (ODAT-SE) is a framework for applying a search algorithm to a direct problem solver to find the optimal solution. It has been developed by the name 2DMAT, and since version 3.0, it is organized as an open platform for data analysis by modularizing direct problem solvers and search algorithms.
+[Open Data Analysis Tool for Science and Engineering (ODAT-SE)](https://github.com/issp-center-dev/ODAT-SE) is a framework for applying a search algorithm to a direct problem solver to find the optimal solution. It has been developed by the name 2DMAT, and since version 3.0, it is organized as an open platform for data analysis by modularizing direct problem solvers and search algorithms.
 
 `sxrdcalc` has been developed as a software package for the analyses of the surface X-ray diffraction data, which calculates the X-ray diffraction intensity from surface, the Patterson map of experimental data, and the fitting of model structure to the experimental data by Levenberg-Marquadt method or simulated annealing method. odatse-SXRD is an adaptor library to use `sxrdcalc` as a direct problem solver of ODAT-SE.
 
