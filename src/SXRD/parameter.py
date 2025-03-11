@@ -147,6 +147,10 @@ class SolverInfo(BaseModel):
         Parameters for the reference data.
     param : SolverParam
         Parameters for the solver.
+    remove_work_dir : bool
+        Flag to remove the working directory after execution.
+    use_tmpdir : bool
+        Flag to use temporal directory.
     option : Dict[str,str]
         Optional settings.
     """
@@ -154,6 +158,8 @@ class SolverInfo(BaseModel):
     config: SolverConfig
     reference: SolverReference
     param: SolverParam
+    remove_work_dir: bool = False
+    use_tmpdir: bool = False
     option: Optional[Dict[str,str]] = None
 
 

@@ -23,51 +23,37 @@ from .parameter import SolverInfo
 
 
 class Input(object):
-    root_dir: Path
-    output_dir: Path
-    dimension: int
-
-    def __init__(self, info_base, info_s):
+    def __init__(self, info_s):
         """
         Initialize the Input class with the provided information.
 
         Parameters
         ----------
-        info_base
-            An object containing base information.
         info_s
             An object containing solver information.
         """
-        self.dimension = info_base["dimension"]
-        self.root_dir = info_base["root_dir"]
-        self.output_dir = info_base["output_dir"]
-
-        self.info_param = info_s.param
+        self.info = info_s
 
         # Read info (a, b, c, alpha, beta, gamma ) from blk or surf files.
         self.lattice_info = self._read_lattice_info(info_s.config.bulk_struc_in_file)
 
-        # Generate input file
-        self._write_input_file(info_s)
-
-    def prepare(self, x: np.ndarray, args):
+    def prepare(self, xs: np.ndarray, args):
         """
         Prepare the input for the optimization process.
 
         Parameters
         ----------
-        x : np.ndarray
+        xs : np.ndarray
             Numpy array of variables.
         args
             Additional arguments.
         """
-        x_list = x
-        #step, iset = args
-        #extra = iset > 0
+        # Generate input file
+        self._write_input_file(self.info)
 
         # Generate fit file
         # Add variables by numpy array.(Variables are updated in optimization process).
-        self._write_fit_file(self.lattice_info, self.info_param, x_list)
+        self._write_fit_file(self.lattice_info, self.info.param, xs)
 
     def _read_lattice_info(self, file_name: str):
         """
