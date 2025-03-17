@@ -24,10 +24,8 @@ import numpy as np
 
 import odatse
 from .input import Input
-from .parameter import SolverInfo
+from .parameter import parse_solver_info
 from .util import Workdir, set_solver_path, run_by_subprocess
-
-from pydantic import ValidationError
 
 
 class Solver(odatse.solver.SolverBase):
@@ -47,11 +45,7 @@ class Solver(odatse.solver.SolverBase):
 
         self._name = "sxrd"
 
-        try:
-            self.info = SolverInfo(**info.solver)
-        except ValidationError as e:
-            print("ERROR: {}".format(e))
-            sys.exit(1)
+        self.info = parse_solver_info(**info.solver)
 
         # Set environment
         self.path_to_solver = set_solver_path(self.info.config.sxrd_exec_file, self.root_dir)

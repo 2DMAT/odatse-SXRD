@@ -162,6 +162,16 @@ class SolverInfo(BaseModel):
     use_tmpdir: bool = False
     option: Optional[Dict[str,str]] = None
 
+def parse_solver_info(**kwargs):
+    try:
+        info = SolverInfo(**kwargs)
+    except ValidationError as e:
+        print("----------------")
+        print(str(e))
+        print("----------------")
+        raise ValueError("failed in parsing solver parameters") from e
+    return info
+
 
 if __name__ == "__main__":
     import tomli
