@@ -37,7 +37,7 @@ def test_write_input_file():
 
             info = odatse.Info(params)
             info_s = SolverInfo(**info.solver)
-            input = Input(info.base, info_s)
+            input = Input(info_s)
 
             input.prepare(xval, arg)
 
@@ -76,8 +76,7 @@ def test_get_results():
             info = odatse.Info(params)
             solver = Solver(info)
 
-            os.makedirs("output/0")
-            shutil.copy(os.path.join(test_dir, "stdout_ref"), "output/0/stdout")
+            shutil.copy(os.path.join(test_dir, "stdout_ref"), "stdout")
 
             v = solver.get_results()
             assert np.isclose(v, ref_value), "reference value = {}".format(ref_value)

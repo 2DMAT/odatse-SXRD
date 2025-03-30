@@ -9,6 +9,8 @@ CMD="python3 ../../src/main.py"
 #MPIEXEC=""
 MPIEXEC="mpiexec -np 4"
 
+sh prepare.sh
+
 
 time $MPIEXEC $CMD input.toml
 

@@ -17,7 +17,23 @@ Their contents will be shown in this section.
 Input parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Input parameters are specified in subsections ``config``, ``post``, ``param``, and ``reference`` in the ``solver`` section.
+Input parameters are specified in the ``solver`` section and its subsections ``config``, ``post``, ``param``, and ``reference``.
+
+[``solver``] section
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- ``remove_work_dir``
+
+  Format: boolean
+
+  Description: When it is set to true, the work directory will be removed after the execution of SXRD solver. The default value is false.
+
+- ``use_tmpdir``
+
+  Format: boolean
+
+  Description: When it is set to true, the work directory will be created under ``/tmp`` (or the directory specified by ``TMPDIR`` environment variable). It is removed after the execution of SXRD solver. The default value is false.
+
 
 [``config``] section
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
